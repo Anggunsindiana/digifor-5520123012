@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forensik Digital (IF-704) | Pertemuan 15 - UNIQHBA</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            cyber: {
+              bg: '#060b19',
+              card: 'rgba(13, 22, 45, 0.72)',
+              cyan: '#00f0ff',
+              purple: '#8b5cf6',
+              gold: '#f59e0b',
+              emerald: '#10b981',
+              rose: '#f43f5e'
+            }
+          },
+          boxShadow: {
+            'neon-cyan': '0 0 25px rgba(0, 240, 255, 0.25)',
+            'neon-purple': '0 0 25px rgba(139, 92, 246, 0.28)',
+            'neon-gold': '0 0 25px rgba(245, 158, 11, 0.25)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-deep: #060b19;
+      --accent-cyan: #00f0ff;
+      --accent-purple: #8b5cf6;
+      --accent-gold: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Cyber Grid & Glow Overlay */
+    .cyber-grid-bg {
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 45%),
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 44px 44px, 44px 44px;
+    }
+
+    /* Glassmorphism Cards */
+    .glass-panel {
+      background: linear-gradient(145deg, rgba(15, 25, 52, 0.78), rgba(8, 14, 32, 0.88));
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 240, 255, 0.18);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    .glass-card {
+      background: rgba(16, 27, 56, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(0, 240, 255, 0.45);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.12);
+    }
+
+    /* Slide Transitions */
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(18px) scale(0.985);
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.45s;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 240, 255, 0.3) transparent;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      z-index: 10;
+    }
+
+    /* Custom Scrollbar */
+    .slide::-webkit-scrollbar {
+      width: 6px;
+    }
+    .slide::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .slide::-webkit-scrollbar-thumb {
+      background: rgba(0, 240, 255, 0.25);
+      border-radius: 9999px;
+    }
+
+    /* Gradient Text */
+    .text-gradient-cyber {
+      background: linear-gradient(135deg, #ffffff 15%, #00f0ff 55%, #8b5cf6 95%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .text-gradient-gold {
+      background: linear-gradient(135deg, #fde68a 10%, #f59e0b 60%, #d97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Image Frame & Zoom Trigger */
+    .diagram-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      background: #040813;
+      cursor: zoom-in;
+      transition: all 0.3s ease;
+    }
+
+    .diagram-frame:hover {
+      border-color: #00f0ff;
+      box-shadow: 0 0 28px rgba(0, 240, 255, 0.25);
+    }
+
+    .diagram-frame img {
+      transition: transform 0.4s ease;
+    }
+
+    .diagram-frame:hover img {
+      transform: scale(1.02);
+    }
+
+    /* Robo Patrol Pulse */
+    @keyframes scanLaser {
+      0%, 100% { transform: translateY(-6px); opacity: 0.4; }
+      50% { transform: translateY(6px); opacity: 1; }
+    }
+    .laser-line {
+      animation: scanLaser 2.2s ease-in-out infinite;
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .float-slow {
+      animation: floatSlow 4s ease-in-out infinite;
+    }
+
+    /* Selectable text inside inputs/tables */
+    input, textarea, code, .selectable {
+      user-select: text;
+    }
+  </style>
+</head>
+
+<body class="cyber-grid-bg h-screen w-screen flex flex-col justify-between relative">
+
+  <!-- Animated Background Particle Network Canvas -->
+  <canvas id="cyberCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+  <!-- Top Header Bar -->
+  <header class="relative z-20 flex items-center justify-between px-4 sm:px-8 py-3 border-b border-cyan-500/15 bg-[#060b19]/80 backdrop-blur-md">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center text-slate-950 font-extrabold shadow-neon-cyan">
+        <i class="fa-solid fa-shield-halved text-base"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono font-bold tracking-wider uppercase text-cyan-400">UNIQHBA • IF-704</span>
+          <span class="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">MODUL 15</span>
+        </div>
+        <p class="text-xs text-slate-400 hidden md:block">Forensik Digital — Review Komprehensif, Sertifikasi Profesi & Penguatan Bukti Digital</p>
+      </div>
+    </div>
+
+    <!-- Top Controls -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Sound FX Toggle -->
+      <button id="toggleSoundBtn" onclick="toggleSound()" title="Efek Suara Navigasi" class="px-3 py-1.5 rounded-xl glass-card text-xs font-medium text-slate-300 hover:text-cyan-300 flex items-center gap-1.5">
+        <i id="soundIcon" class="fa-solid fa-volume-high text-cyan-400"></i>
+        <span class="hidden sm:inline">SFX</span>
+      </button>
+
+      <!-- Slide Overview Grid Toggle -->
+      <button onclick="toggleOverviewModal()" title="Daftar Isi Slide (G)" class="px-3 py-1.5 rounded-xl glass-card text-xs font-medium text-slate-300 hover:text-cyan-300 flex items-center gap-1.5">
+        <i class="fa-solid fa-grid-2 text-purple-400"></i>
+        <span class="hidden sm:inline">Daftar Slide</span>
+      </button>
+
+      <!-- Fullscreen Toggle -->
+      <button onclick="toggleFullscreen()" title="Layar Penuh (F)" class="px-3 py-1.5 rounded-xl glass-card text-xs font-medium text-slate-300 hover:text-cyan-300 flex items-center gap-1.5">
+        <i id="fsIcon" class="fa-solid fa-expand text-amber-400"></i>
+        <span class="hidden sm:inline">Fullscreen</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Presentation Stage -->
+  <main id="slidesContainer" class="relative flex-1 w-full overflow-hidden z-10">
+
+    <!-- =====================================================================
+         SLIDE 1: COVER UTAMA (JUDUL MEGAH)
+    ====================================================================== -->
+    <section class="slide active flex items-center justify-center px-4 sm:px-10 py-6" data-title="Cover Utama — Pertemuan 15" data-tip="Selamat datang di Pertemuan 15! Gunakan tombol panah kanan/kiri atau spasi untuk berpindah slide.">
+      <div class="max-w-6xl w-full mx-auto">
+        <div class="glass-panel rounded-3xl p-6 sm:p-10 lg:p-12 relative overflow-hidden">
+          <!-- Decorative Corner Glows -->
+          <div class="absolute -top-24 -right-24 w-72 h-72 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+          <!-- Top University Badge -->
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs sm:text-sm font-semibold tracking-wide">
+              <i class="fa-solid fa-building-columns text-cyan-400"></i>
+              UNIVERSITAS QAMARUL HUDA BADARUDDIN (UNIQHBA)
+            </div>
+            <div class="flex items-center gap-2 font-mono text-xs">
+              <span class="px-3 py-1 rounded-lg bg-slate-900/90 border border-slate-700 text-amber-400 font-bold">KODE MK: IF-704</span>
+              <span class="px-3 py-1 rounded-lg bg-slate-900/90 border border-slate-700 text-purple-300">SEMESTER VII • 3 SKS</span>
+            </div>
+          </div>
+
+          <!-- Main Headline -->
+          <div class="space-y-4 max-w-4xl">
+            <div class="inline-flex items-center gap-2 text-xs sm:text-sm font-mono uppercase tracking-widest text-amber-400 font-semibold">
+              <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+              MATA KULIAH FORENSIK DIGITAL • PERTEMUAN 15
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.12] text-gradient-cyber">
+              Review Komprehensif, Sertifikasi Profesi &amp; Penguatan Bukti Digital
+            </h1>
+
+            <p class="text-slate-300 text-sm sm:text-lg leading-relaxed max-w-3xl pt-1">
+              Integrasi metodologi saintifik <span class="text-cyan-300 font-semibold">Digital Forensics &amp; Incident Response (DFIR)</span>, pemetaan standar kompetensi global &amp; nasional, tantangan bukti Cloud/AI, serta strategi sukses Ujian Akhir Semester.
+            </p>
+          </div>
+
+          <!-- Metadata Pills -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-7 pt-6 border-t border-slate-700/60 text-xs sm:text-sm">
+            <div class="flex items-center gap-3 bg-slate-900/60 px-4 py-3 rounded-2xl border border-slate-800">
+              <i class="fa-solid fa-user-shield text-cyan-400 text-lg"></i>
+              <div>
+                <span class="text-slate-400 block text-[11px] uppercase font-mono">Pengampu</span>
+                <span class="font-semibold text-white">Tim Dosen Keamanan Siber UNIQHBA</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 bg-slate-900/60 px-4 py-3 rounded-2xl border border-slate-800">
+              <i class="fa-solid fa-clock text-purple-400 text-lg"></i>
+              <div>
+                <span class="text-slate-400 block text-[11px] uppercase font-mono">Alokasi &amp; Kategori</span>
+                <span class="font-semibold text-white">150 Menit • Teori Komprehensif</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 bg-slate-900/60 px-4 py-3 rounded-2xl border border-slate-800">
+              <i class="fa-solid fa-bullseye text-amber-400 text-lg"></i>
+              <div>
+                <span class="text-slate-400 block text-[11px] uppercase font-mono">Capaian Target</span>
+                <span class="font-semibold text-white">Sub-CPMK 15 (Holistic DFIR)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Key Highlight Stats -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
+            <div class="glass-card rounded-2xl p-4 border-l-4 border-l-cyan-400">
+              <div class="text-2xl sm:text-3xl font-extrabold text-cyan-400 font-mono">04</div>
+              <div class="text-xs sm:text-sm font-bold text-white mt-0.5">Pilar Utama DFIR</div>
+              <div class="text-[11px] text-slate-400">Disk, Memori, Jaringan &amp; Mobile</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 border-l-4 border-l-purple-500">
+              <div class="text-2xl sm:text-3xl font-extrabold text-purple-400 font-mono">04</div>
+              <div class="text-xs sm:text-sm font-bold text-white mt-0.5">Standar Sertifikasi</div>
+              <div class="text-[11px] text-slate-400">CHFI, EnCE, GCFE &amp; BNSP SKKNI</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 border-l-4 border-l-emerald-400">
+              <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">AI+</div>
+              <div class="text-xs sm:text-sm font-bold text-white mt-0.5">Tantangan Modern</div>
+              <div class="text-[11px] text-slate-400">Cloud Forensics &amp; Deepfake GAN</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 border-l-4 border-l-amber-400">
+              <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">30%</div>
+              <div class="text-xs sm:text-sm font-bold text-white mt-0.5">Bobot Evaluasi UAS</div>
+              <div class="text-[11px] text-slate-400">Portofolio BAP, Kasus &amp; SHA-256</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SLIDE 2: CAPAIAN PEMBELAJARAN (SUB-CPMK 15) & PETA JALAN DFIR
+    ====================================================================== -->
+    <section class="slide flex items-center justify-center px-4 sm:px-10 py-6" data-title="Sub-CPMK 15 & Peta Jalan DFIR" data-tip="Sub-CPMK 15 menyatukan seluruh materi dari Pertemuan 1 hingga 14 menjadi kerangka investigasi yang utuh.">
+      <div class="max-w-6xl w-full mx-auto space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-2">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-cyan-400">01 • LANDASAN KOMPETENSI AKHIR</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white mt-1">Capaian Pembelajaran (Sub-CPMK 15) &amp; Peta Jalan DFIR</h2>
+          </div>
+          <span class="text-xs font-mono px-3 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 self-start">
+            Sintesis Pertemuan 1 – 14
+          </span>
+        </div>
+
+        <!-- Sub-CPMK 15 Banner -->
+        <div class="glass-panel rounded-2xl p-5 sm:p-6 border-l-4 border-l-amber-400 relative">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
+              <i class="fa-solid fa-graduation-cap text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-base sm:text-lg font-bold text-amber-300">Target Kompetensi Holistis Mahasiswa</h3>
+              <p class="text-xs sm:text-base text-slate-200 leading-relaxed mt-1">
+                Mahasiswa mampu menyatukan pemahaman holistis atas <strong>empat pilar forensik digital</strong> (Disk, Memori, Jaringan, dan Mobile), memetakan <strong>standar sertifikasi profesi internasional</strong> (<span class="font-mono text-cyan-300">CHFI, EnCE, GCFE</span>) dan <span class="font-mono text-cyan-300">SKKNI Indonesia</span>, memahami tantangan forensik mutakhir (<strong>Cloud &amp; AI-generated evidence</strong>), serta mempersiapkan diri secara optimal menghadapi <strong>evaluasi akhir semester (UAS)</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Pillars Roadmap Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Pillar 1 -->
+          <div onclick="goToSlide(2)" class="glass-card rounded-2xl p-5 cursor-pointer group relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-10 h-10 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center border border-cyan-400/30 group-hover:bg-cyan-400 group-hover:text-slate-950 transition">
+                <i class="fa-solid fa-hard-drive text-lg"></i>
+              </span>
+              <span class="font-mono text-xs text-cyan-400 font-bold">PILAR 01</span>
+            </div>
+            <h4 class="text-lg font-bold text-white group-hover:text-cyan-300 transition">Disk &amp; Filesystem Forensics</h4>
+            <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+              Akuisisi bit-stream (<code class="text-cyan-300">RAW/E01</code>), struktur Master File Table (<code class="text-cyan-300">$MFT</code>), pemulihan <em>unallocated space</em>, <em>file carving magic bytes</em>, &amp; Volume Shadow Copies.
+            </p>
+            <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-[11px] font-mono text-cyan-400">
+              <span>Lihat Detail Slide 3</span>
+              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Pillar 2 -->
+          <div onclick="goToSlide(3)" class="glass-card rounded-2xl p-5 cursor-pointer group relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-400/30 group-hover:bg-purple-500 group-hover:text-white transition">
+                <i class="fa-solid fa-memory text-lg"></i>
+              </span>
+              <span class="font-mono text-xs text-purple-400 font-bold">PILAR 02</span>
+            </div>
+            <h4 class="text-lg font-bold text-white group-hover:text-purple-300 transition">Volatile Memory (RAM)</h4>
+            <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+              Ekstraksi memori hidup (<code class="text-purple-300">DumpIt/FTK</code>), pembedahan kernel <strong>Volatility 3</strong> (<code class="text-purple-300">pslist, pstree, netscan, malfind</code>), &amp; ekstraksi kunci BitLocker.
+            </p>
+            <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-[11px] font-mono text-purple-400">
+              <span>Lihat Detail Slide 4</span>
+              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Pillar 3 -->
+          <div onclick="goToSlide(4)" class="glass-card rounded-2xl p-5 cursor-pointer group relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-400/30 group-hover:bg-amber-400 group-hover:text-slate-950 transition">
+                <i class="fa-solid fa-network-wired text-lg"></i>
+              </span>
+              <span class="font-mono text-xs text-amber-400 font-bold">PILAR 03</span>
+            </div>
+            <h4 class="text-lg font-bold text-white group-hover:text-amber-300 transition">Network &amp; Traffic Forensics</h4>
+            <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+              Analisis paket <code class="text-amber-300">PCAP/PCAPNG</code>, filter BPF <strong>Wireshark</strong>, deteksi <em>C2 Beaconing</em>, <em>DNS Tunneling</em>, &amp; rekonstruksi file dari aliran <code class="text-amber-300">HTTP/SMB</code>.
+            </p>
+            <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-[11px] font-mono text-amber-400">
+              <span>Lihat Detail Slide 5</span>
+              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Pillar 4 -->
+          <div onclick="goToSlide(5)" class="glass-card rounded-2xl p-5 cursor-pointer group relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-400/30 group-hover:bg-emerald-400 group-hover:text-slate-950 transition">
+                <i class="fa-solid fa-mobile-screen-button text-lg"></i>
+              </span>
+              <span class="font-mono text-xs text-emerald-400 font-bold">PILAR 04</span>
+            </div>
+            <h4 class="text-lg font-bold text-white group-hover:text-emerald-300 transition">Mobile Device Forensics</h4>
+            <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+              Akuisisi via <code class="text-emerald-300">ADB/MOBILedit</code>, isolasi sinyal <strong>kantung Faraday</strong>, dekripsi &amp; parsing SQLite chat (<code class="text-emerald-300">msgstore.db</code>), serta ekstraksi GPS EXIF.
+            </p>
+            <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-[11px] font-mono text-emerald-400">
+              <span>Lihat Detail Slide 6</span>
+              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SLIDE 3: PILAR 1 — DISK & FILESYSTEM FORENSICS
+    ====================================================================== -->
+    <section class="slide flex items-center justify-center px-4 sm:px-10 py-6" data-title="Pilar 1: Disk & Filesystem Forensics" data-tip="Klik pada gambar diagram di samping untuk memperbesar detail pemeriksaan Prefetch dan Registry USBSTOR!">
+      <div class="max-w-6xl w-full mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- Left Content (5 Cols) -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 text-xs font-mono font-bold">
+              <i class="fa-solid fa-hard-drive"></i> PILAR 01 • NON-VOLATILE STORAGE
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+              Disk &amp; Filesystem Forensics
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Pemeriksaan media penyimpanan permanen secara forensik tanpa mengubah integritas bit asli menggunakan <em>hardware write-blocker</em> dan verifikasi hash kriptografi.
+            </p>
+
+            <!-- Technical Focus Points -->
+            <div class="space-y-2.5">
+              <div class="glass-card p-3.5 rounded-xl">
+                <div class="flex items-center gap-2 text-cyan-300 font-bold text-xs sm:text-sm">
+                  <i class="fa-solid fa-compact-disc"></i> Bit-Stream Imaging &amp; $MFT
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  Kloning sektor-demi-sektor (<code class="text-cyan-300">RAW / E01</code>) dan pembedahan metadata <strong>Master File Table ($MFT)</strong> pada NTFS untuk melacak timestamp MACB.
+                </p>
+              </div>
+
+              <div class="glass-card p-3.5 rounded-xl">
+                <div class="flex items-center gap-2 text-purple-300 font-bold text-xs sm:text-sm">
+                  <i class="fa-solid fa-puzzle-piece"></i> File Carving &amp; Shadow Copies
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  Pemulihan berkas terhapus pada <code class="text-purple-300">unallocated space</code> berdasarkan <em>header/footer magic bytes</em> serta ekstraksi riwayat sistem dari <strong>Volume Shadow Copies</strong>.
+                </p>
+              </div>
+
+              <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-cyan-400">
+                <div class="flex items-center gap-2 text-amber-300 font-bold text-xs sm:text-sm">
+                  <i class="fa-brands fa-windows"></i> Artefak Eksekusi &amp; USB Windows
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  Analisis <code class="text-amber-300">Prefetch</code> via <strong>PECmd</strong> (waktu &amp; jumlah eksekusi <code class="text-white">.exe</code>) serta pelacakan nomor seri flashdisk di <code class="text-amber-300">Registry USBSTOR</code> via <strong>USBDeview</strong>.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Visual Diagram (7 Cols) -->
+          <div class="lg:col-span-7">
+            <div class="glass-panel p-3 sm:p-4 rounded-2xl">
+              <div class="diagram-frame group" onclick="openLightbox('windows_usb_forensics.png', 'Analisis Artefak Windows & Perangkat USB (Prefetch, PECmd, Registry USBSTOR & USBDeview)')">
+                <img 
+                  src="windows_usb_forensics.png" 
+                  alt="Diagram Analisis Artefak Windows dan Perangkat USB menggunakan PECmd dan USBDeview"
+                  class="w-full h-auto rounded-xl object-contain"
+                  onerror="handleImgFallback(this, 'windows_usb_forensics.png', 'Analisis Artefak Windows & Perangkat USB')"
+                />
+                <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/85 border border-cyan-400/50 text-cyan-300 text-xs font-mono flex items-center gap-1.5 shadow-lg">
+                  <i class="fa-solid fa-magnifying-glass-plus"></i> Klik Perbesar
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-3 px-1 text-[11px] font-mono text-slate-400">
+                <span><i class="fa-solid fa-file-image text-cyan-400 mr-1"></i> Sumber: windows_usb_forensics.png</span>
+                <span class="text-cyan-400">Korelasi Prefetch + USBSTOR</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SLIDE 4: PILAR 2 — VOLATILE MEMORY FORENSICS (RAM)
+    ====================================================================== -->
+    <section class="slide flex items-center justify-center px-4 sm:px-10 py-6" data-title="Pilar 2: Volatile Memory Forensics (RAM)" data-tip="Memori RAM menyimpan bukti yang hilang saat komputer dimatikan, termasuk malware fileless dan kunci BitLocker.">
+      <div class="max-w-6xl w-full mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- Left Visual Diagram (7 Cols) -->
+          <div class="lg:col-span-7 order-2 lg:order-1">
+            <div class="glass-panel p-3 sm:p-4 rounded-2xl">
+              <div class="diagram-frame group" onclick="openLightbox('memory_forensics_volatility.png', 'Analisis Volatile Memory RAM dengan Framework Volatility 3 (pstree, netscan, malfind)')">
+                <img 
+                  src="memory_forensics_volatility.png" 
+                  alt="Diagram Analisis Volatile Memory RAM menggunakan Volatility 3"
+                  class="w-full h-auto rounded-xl object-contain"
+                  onerror="handleImgFallback(this, 'memory_forensics_volatility.png', 'Analisis Volatile Memory RAM - Volatility 3')"
+                />
+                <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/85 border border-purple-400/50 text-purple-300 text-xs font-mono flex items-center gap-1.5 shadow-lg">
+                  <i class="fa-solid fa-magnifying-glass-plus"></i> Klik Perbesar
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-3 px-1 text-[11px] font-mono text-slate-400">
+                <span><i class="fa-solid fa-file-image text-purple-400 mr-1"></i> Sumber: memory_forensics_volatility.png</span>
+                <span class="text-purple-400">Kernel Inspection • Volatility 3</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Content (5 Cols) -->
+          <div class="lg:col-span-5 space-y-4 order-1 lg:order-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-400/30 text-purple-300 text-xs font-mono font-bold">
+              <i class="fa-solid fa-memory"></i> PILAR 02 • LIVE RESPONSE &amp; RAM
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+              Volatile Memory Forensics (RAM)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Berdasarkan <em>Order of Volatility</em> (RFC 3227), isi RAM wajib diamankan sebelum sistem dimatikan untuk menangkap jejak serangan <em>fileless malware</em> dan proses aktif.
+            </p>
+
+            <div class="space-y-2.5">
+              <div class="glass-card p-3.5 rounded-xl">
+                <div class="flex items-center gap-2 text-cyan-300 font-bold text-xs sm:text-sm">
+                  <i class="fa-solid fa-bolt"></i> Live Memory Acquisition
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  Ekstraksi dump memori fisik secara langsung menggunakan <code class="text-cyan-300">DumpIt</code> atau <code class="text-cyan-300">FTK Imager</code> untuk mengamankan <strong>kunci enkripsi BitLocker</strong> yang tersimpan di RAM.
+                </p>
+              </div>
+
+              <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-purple-500">
+                <div class="flex items-center gap-2 text-purple-300 font-bold text-xs sm:text-sm">
+                  <i class="fa-solid fa-microchip"></i> Modul Pembedahan Volatility 3
+                </div>
+                <ul class="text-xs text-slate-300 mt-1.5 space-y-1 font-mono">
+                  <li>• <span class="text-cyan-300">windows.pslist / pstree</span> : Pohon hubungan induk-anak proses (<code class="text-rose-400">malware.exe</code>).</li>
+                  <li>• <span class="text-cyan-300">windows.netscan</span> : Pemindaian soket &amp; koneksi jaringan aktif/mencurigakan.</li>
+                  <li>• <span class="text-cyan-300">windows.malfind</span> : Deteksi injeksi kode &amp; API hooking tersembunyi.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SLIDE 5: PILAR 3 — NETWORK & TRAFFIC FORENSICS
+    ====================================================================== -->
+    <section class="slide flex items-center justify-center px-4 sm:px-10 py-6" data-title="Pilar 3: Network & Traffic Forensics" data-tip="Perhatikan pola interval waktu reguler pada komunikasi keluar — itu indikator kuat Command & Control (C2) Beaconing!">
+      <div class="max-w-6xl w-full mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- Left Content (5 Cols) -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-mono font-bold">
+              <i class="fa-solid fa-network-wired"></i> PILAR 03 • PACKET &amp; FLOW ANALYSIS
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+              Network &amp; Traffic Forensics
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Rekonstruksi aktivitas komunikasi jaringan dari rekaman paket untuk membuktikan pergerakan lateral peretas serta eksfiltrasi data rahasia.
+            </p>
+
+            <div class="space-y-2.5">
+              <div class="glass-card p-3.5 rounded-xl">
+                <div class="flex items-center gap-2 text-cyan-300 font-bold text-xs sm:text-sm">
+                  <i class="fa-solid fa-filter"></i> Inspeksi PCAP &amp; Filter BPF Wireshark
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  Analisis rekaman <code class="text-cyan-300">PCAP / PCAPNG</code> menggunakan <em>Berkeley Packet Filter (BPF)</em> seperti <code class="text-amber-300">tcp port 80 and ip host 192.168.1.10</code>.
+                </p>
+              </div>
+
+              <div class="glass-card p-3.5 rounded-xl">
+                <div class="flex items-center gap-2 text-amber-300 font-bold text-xs sm:text-sm">
+                  <i class="fa-solid fa-tower-broadcast"></i> Deteksi C2 Beaconing &amp; DNS Tunneling
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  Identifikasi sinyal <em>Command &amp; Control (C2)</em> berinterval reguler serta penyelundupan data terenkode pada subdomain panjang (<code class="text-cyan-300">long.encodeddomain.com</code>).
+                </p>
+              </div>
+
+              <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-amber-400">
+                <div class="flex items-center gap-2 text-emerald-300 font-bold text-xs sm:text-sm">
+                  <i class="fa-solid fa-file-export"></i> Ekstraksi Objek HTTP &amp; SMB
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  Mengembalikan dokumen, gambar, atau payload malware yang ditransmisikan melalui protokol <code class="text-emerald-300">HTTP</code> dan <code class="text-emerald-300">SMB</code> menjadi berkas utuh.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Visual Diagram (7 Cols) -->
+          <div class="lg:col-span-7">
+            <div class="glass-panel p-3 sm:p-4 rounded-2xl">
+              <div class="diagram-frame group" onclick="openLightbox('network_forensics_wireshark.png', 'Analisis & Forensik Lalu Lintas Jaringan PCAP (Wireshark BPF, C2 Beaconing & DNS Tunneling)')">
+                <img 
+                  src="network_forensics_wireshark.png" 
+                  alt="Diagram Analisis Lalu Lintas Jaringan PCAP dengan Wireshark"
+                  class="w-full h-auto rounded-xl object-contain"
+                  onerror="handleImgFallback(this, 'network_forensics_wireshark.png', 'Analisis & Forensik Lalu Lintas Jaringan (PCAP)')"
+                />
+                <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/85 border border-amber-400/50 text-amber-300 text-xs font-mono flex items-center gap-1.5 shadow-lg">
+                  <i class="fa-solid fa-magnifying-glass-plus"></i> Klik Perbesar
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-3 px-1 text-[11px] font-mono text-slate-400">
+                <span><i class="fa-solid fa-file-image text-amber-400 mr-1"></i> Sumber: network_forensics_wireshark.png</span>
+                <span class="text-amber-400">BPF • C2 Beacon • DNS Tunnel</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SLIDE 6: PILAR 4 — MOBILE DEVICE FORENSICS
+    ====================================================================== -->
+    <section class="slide flex items-center justify-center px-4 sm:px-10 py-6" data-title="Pilar 4: Mobile Device Forensics" data-tip="Selalu masukkan barang bukti smartphone ke dalam kantung Faraday agar pelaku tidak dapat melakukan remote wipe!">
+      <div class="max-w-6xl w-full mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- Left Visual Diagram (7 Cols) -->
+          <div class="lg:col-span-7 order-2 lg:order-1">
+            <div class="glass-panel p-3 sm:p-4 rounded-2xl">
+              <div class="diagram-frame group" onclick="openLightbox('mobile_database_forensics.png', 'Forensik Perangkat Seluler & Parsing Database SQLite (msgstore.db & DB Browser for SQLite)')">
+                <img 
+                  src="mobile_database_forensics.png" 
+                  alt="Diagram Forensik Perangkat Seluler dan Parsing Database SQLite"
+                  class="w-full h-auto rounded-xl object-contain"
+                  onerror="handleImgFallback(this, 'mobile_database_forensics.png', 'Forensik Perangkat Seluler & Parsing Database')"
+                />
+                <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/85 border border-emerald-400/50 text-emerald-300 text-xs font-mono flex items-center gap-1.5 shadow-lg">
+                  <i class="fa-solid fa-magnifying-glass-plus"></i> Klik Perbesar
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-3 px-1 text-[11px] font-mono text-slate-400">
+                <span><i class="fa-solid fa-file-image text-emerald-400 mr-1"></i> Sumber: mobile_database_forensics.png</span>
+                <span class="text-emerald-400">SQLite Parsing • msgstore.db</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Content (5 Cols) -->
+          <div class="lg:col-span-5 space-y-4 order-1 lg:order-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs font-mono font-bold">
+              <i class="fa-solid fa-mobile-screen-button"></i> PILAR 04 • SMARTPHONE &amp; SQLITE
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+              Mobile Device Forensics
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Penanganan barang bukti perangkat seluler memerlukan isolasi jaringan ketat dan teknik dekripsi basis data aplikasi pesan instan sesuai panduan <strong>NIST SP 800-101 Rev. 1</strong>.
+            </p>
+
+            <div class="space-y-2.5">
+              <div class="glass-card p-3.5 rounded-xl">
+                <div class="flex items-center gap-2 text-amber-300 font-bold text-xs sm:text-sm">
+                  <i class="fa-solid fa-shield-virus"></i> Isolasi Sinyal &amp; Akuisisi Data
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  Penggunaan <strong>kantung Faraday</strong> (atau <em>Airplane Mode</em>) untuk mencegah <em>remote wipe</em>, diikuti ekstraksi logis/fisik via <code class="text-cyan-300">ADB</code> dan <code class="text-cyan-300">MOBILedit Forensic</code>.
+                </p>
+              </div>
+
+              <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-emerald-400">
+                <div class="flex items-center gap-2 text-emerald-300 font-bold text-xs sm:text-sm">
+                  <i class="fa-solid fa-database"></i> Parsing SQLite &amp; Metadata GPS EXIF
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  Dekripsi dan pembedahan tabel <code class="text-emerald-300">msgstore.db</code> menggunakan <strong>DB Browser for SQLite</strong> untuk mengungkap riwayat chat, kontak, serta koordinat <strong>GPS EXIF</strong> pada foto bukti.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SLIDE 7: MATRIKS RANGKUMAN ARTEFAK KUNCI BUKTI DIGITAL
+    ====================================================================== -->
+    <section class="slide flex items-center justify-center px-4 sm:px-10 py-6" data-title="Matriks Rangkuman Artefak Kunci" data-tip="Gunakan tombol filter kategori di atas tabel untuk memfokuskan kajian pada masing-masing jenis artefak bukti.">
+      <div class="max-w-6xl w-full mx-auto space-y-5">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-cyan-400">02 • REFERENSI PEMBUKTIAN HUKUM</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white mt-1">Matriks Rangkuman Artefak Kunci Bukti Digital</h2>
+          </div>
+
+          <!-- Filter Buttons -->
+          <div class="flex flex-wrap gap-2" id="artifactFilters">
+            <button onclick="filterArtifacts('all', this)" class="filter-btn active px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-400 text-slate-950 transition">Semua (4)</button>
+            <button onclick="filterArtifacts('exec', this)" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold glass-card text-slate-300 hover:text-cyan-300">Eksekusi Program</button>
+            <button onclick="filterArtifacts('usb', this)" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold glass-card text-slate-300 hover:text-cyan-300">Aktivitas USB</button>
+            <button onclick="filterArtifacts('web', this)" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold glass-card text-slate-300 hover:text-cyan-300">Riwayat Web</button>
+            <button onclick="filterArtifacts('chat', this)" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold glass-card text-slate-300 hover:text-cyan-300">Komunikasi Chat</button>
+          </div>
+        </div>
+
+        <!-- Responsive Matrix Table -->
+        <div class="glass-panel rounded-2xl overflow-hidden border border-cyan-500/25">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-900/95 border-b border-cyan-500/30 text-[11px] sm:text-xs font-mono uppercase tracking-wider text-cyan-300">
+                  <th class="py-4 px-5">Tipe Bukti</th>
+                  <th class="py-4 px-5">Lokasi Artefak Utama</th>
+                  <th class="py-4 px-5">Alat Analisis Standar</th>
+                  <th class="py-4 px-5">Nilai Pembuktian di Sidang</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/80 text-xs sm:text-sm" id="artifactTableBody">
+                <!-- Row 1: Eksekusi Program -->
+                <tr data-cat="exec" class="hover:bg-cyan-500/5 transition">
+                  <td class="py-4 px-5 font-bold text-white whitespace-nowrap">
+                    <div class="flex items-center gap-2.5">
+                      <span class="w-8 h-8 rounded-lg bg-cyan-500/15 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
+                        <i class="fa-solid fa-terminal"></i>
+                      </span>
+                      <span>Eksekusi Program</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-5 font-mono text-xs text-cyan-300">
+                    <div>C:\Windows\Prefetch</div>
+                    <div class="text-purple-300 mt-0.5">Amcache.hve</div>
+                  </td>
+                  <td class="py-4 px-5 font-mono text-xs">
+                    <span class="px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-amber-300">PECmd</span>
+                    <span class="px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-amber-300 ml-1">AmcacheParser</span>
+                  </td>
+                  <td class="py-4 px-5 text-slate-200">
+                    Membuktikan program <strong class="text-rose-400">malware benar-benar dijalankan</strong> pelaku beserta jumlah eksekusi dan timestamp terakhir.
+                  </td>
+                </tr>
+
+                <!-- Row 2: Aktivitas USB -->
+                <tr data-cat="usb" class="hover:bg-purple-500/5 transition">
+                  <td class="py-4 px-5 font-bold text-white whitespace-nowrap">
+                    <div class="flex items-center gap-2.5">
+                      <span class="w-8 h-8 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/30">
+                        <i class="fa-brands fa-usb"></i>
+                      </span>
+                      <span>Aktivitas USB</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-5 font-mono text-xs text-purple-300">
+                    <div>Registry USBSTOR</div>
+                    <div class="text-cyan-300 mt-0.5">Event ID 20001</div>
+                  </td>
+                  <td class="py-4 px-5 font-mono text-xs">
+                    <span class="px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-amber-300">USBDeview</span>
+                    <span class="px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-amber-300 ml-1">Registry Explorer</span>
+                  </td>
+                  <td class="py-4 px-5 text-slate-200">
+                    Membuktikan <strong class="text-cyan-300">serial number unik flashdisk</strong> yang terhubung dan digunakan untuk menampung file curian.
+                  </td>
+                </tr>
+
+                <!-- Row 3: Riwayat Web -->
+                <tr data-cat="web" class="hover:bg-amber-500/5 transition">
+                  <td class="py-4 px-5 font-bold text-white whitespace-nowrap">
+                    <div class="flex items-center gap-2.5">
+                      <span class="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/30">
+                        <i class="fa-solid fa-globe"></i>
+                      </span>
+                      <span>Riwayat Web</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-5 font-mono text-xs text-amber-300">
+                    <div>SQLite History</div>
+                    <div class="text-slate-400 mt-0.5">(Chrome / Edge)</div>
+                  </td>
+                  <td class="py-4 px-5 font-mono text-xs">
+                    <span class="px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-amber-300">Browsing History View</span>
+                  </td>
+                  <td class="py-4 px-5 text-slate-200">
+                    Membuktikan <strong class="text-amber-300">pencarian metode peretasan</strong>, pengunduhan eksploit, atau akses ke penyimpanan cloud pribadi.
+                  </td>
+                </tr>
+
+                <!-- Row 4: Komunikasi Chat -->
+                <tr data-cat="chat" class="hover:bg-emerald-500/5 transition">
+                  <td class="py-4 px-5 font-bold text-white whitespace-nowrap">
+                    <div class="flex items-center gap-2.5">
+                      <span class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                        <i class="fa-brands fa-whatsapp"></i>
+                      </span>
+                      <span>Komunikasi Chat</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-5 font-mono text-xs text-emerald-300">
+                    <div>SQLite msgstore.db</div>
+                    <div class="text-slate-400 mt-0.5">(WhatsApp Database)</div>
+                  </td>
+                  <td class="py-4 px-5 font-mono text-xs">
+                    <span class="px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-amber-300">DB Browser for SQLite</span>
+                  </td>
+                  <td class="py-4 px-5 text-slate-200">
+                    Membuktikan <strong class="text-emerald-300">pesan persekongkolan</strong>, perencanaan, dan instruksi kejahatan beserta cap waktu otentik.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Bottom Forensic Tip -->
+        <div class="flex items-center justify-between text-xs text-slate-400 px-2">
+          <span><i class="fa-solid fa-scale-balanced text-cyan-400 mr-1.5"></i> Prinsip Korelasi Bukti: Kombinasi keempat artefak membangun <em>Timeline Rekonstruksi Insiden</em> yang tak terbantahkan di persidangan.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SLIDE 8: PETA KARIER & STANDAR SERTIFIKASI PROFESI
+    ====================================================================== -->
+    <section class="slide flex items-center justify-center px-4 sm:px-10 py-6" data-title="Sertifikasi Profesi Digital Forensics" data-tip="Sertifikasi seperti CHFI, EnCE, GCFE, dan BNSP SKKNI sangat meningkatkan kredibilitas ahli forensik di pengadilan.">
+      <div class="max-w-6xl w-full mx-auto space-y-5">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-amber-400">03 • PROSPEK KARIER &amp; SERTIFIKASI KOMPETENSI</span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-white mt-1">Standar Sertifikasi Profesi Digital Forensics</h2>
+        </div>
+
+        <!-- Career Destinations Strip -->
+        <div class="glass-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 border-l-4 border-l-cyan-400">
+          <div class="text-xs sm:text-sm text-slate-200">
+            <span class="font-bold text-cyan-300">Prospek Karier Lulusan S1 Ilmu Komputer UNIQHBA:</span> Penyelidik Siber &amp; Analis Forensik Digital di:
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs font-mono">
+            <span class="px-3 py-1 rounded-lg bg-slate-900 border border-cyan-500/30 text-cyan-300"><i class="fa-solid fa-shield mr-1"></i> POLRI (Dittipidsiber)</span>
+            <span class="px-3 py-1 rounded-lg bg-slate-900 border border-purple-500/30 text-purple-300"><i class="fa-solid fa-gavel mr-1"></i> Kejaksaan &amp; KPK</span>
+            <span class="px-3 py-1 rounded-lg bg-slate-900 border border-amber-500/30 text-amber-300"><i class="fa-solid fa-lock mr-1"></i> BSSN</span>
+            <span class="px-3 py-1 rounded-lg bg-slate-900 border border-emerald-500/30 text-emerald-300"><i class="fa-solid fa-building mr-1"></i> Konsultan Siber / CSIRT</span>
+          </div>
+        </div>
+
+        <!-- 4 Certification Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- CHFI -->
+          <div class="glass-card rounded-2xl p-5 border-t-4 border-t-cyan-400">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">GLOBAL • EC-COUNCIL</span>
+                <h3 class="text-xl font-extrabold text-white mt-2">CHFI</h3>
+                <p class="text-xs font-semibold text-cyan-300">Computer Hacking Forensic Investigator</p>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-cyan-500/15 flex items-center justify-center text-cyan-400 text-xl shrink-0">
+                <i class="fa-solid fa-user-secret"></i>
+              </div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed">
+              Sertifikasi global paling populer yang mencakup metodologi investigasi forensik menyeluruh mulai dari <strong>jaringan, disk, web, database, hingga cloud &amp; malware</strong>.
+            </p>
+          </div>
+
+          <!-- EnCE -->
+          <div class="glass-card rounded-2xl p-5 border-t-4 border-t-purple-500">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-purple-500/15 text-purple-300 border border-purple-500/30">GLOBAL • OPENTEXT</span>
+                <h3 class="text-xl font-extrabold text-white mt-2">EnCE</h3>
+                <p class="text-xs font-semibold text-purple-300">EnCase Certified Examiner</p>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-purple-500/15 flex items-center justify-center text-purple-400 text-xl shrink-0">
+                <i class="fa-solid fa-certificate"></i>
+              </div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed">
+              Sertifikasi spesialisasi tingkat tinggi yang diakui luas oleh <strong>lembaga penegak hukum dan pengadilan internasional</strong> untuk pemeriksa ahli pengguna EnCase Forensic.
+            </p>
+          </div>
+
+          <!-- GCFE / GCFA -->
+          <div class="glass-card rounded-2xl p-5 border-t-4 border-t-amber-400">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">ADVANCED • SANS INSTITUTE</span>
+                <h3 class="text-xl font-extrabold text-white mt-2">GCFE / GCFA</h3>
+                <p class="text-xs font-semibold text-amber-300">GIAC Certified Forensic Examiner / Analyst</p>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-amber-500/15 flex items-center justify-center text-amber-400 text-xl shrink-0">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+              </div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed">
+              Sertifikasi tingkat mahir berorientasi praktik mendalam pada <strong>analisis artefak Windows tingkat lanjut, analisis malware, dan <em>threat hunting</em> korporat</strong>.
+            </p>
+          </div>
+
+          <!-- BNSP SKKNI -->
+          <div class="glass-card rounded-2xl p-5 border-t-4 border-t-emerald-400">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <span class="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">NASIONAL • BNSP INDONESIA</span>
+                <h3 class="text-xl font-extrabold text-white mt-2">Skema Penilai Forensik Digital</h3>
+                <p class="text-xs font-semibold text-emerald-300">Standar Kompetensi Kerja Nasional Indonesia (SKKNI)</p>
+              </div>
+              <div class="w-11 h-11 rounded-xl bg-emerald-500/15 flex items-center justify-center text-emerald-400 text-xl shrink-0">
+                <i class="fa-solid fa-award"></i>
+              </div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed">
+              Pengakuan kompetensi resmi negara Republik Indonesia bidang <strong>forensik siber</strong> yang menjadi rujukan legalitas saksi ahli di peradilan Indonesia.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SLIDE 9: TREN TANTANGAN FORENSIK MODERN — CLOUD & GENERATIVE AI
+    ====================================================================== -->
+    <section class="slide flex items-center justify-center px-4 sm:px-10 py-6" data-title="Tantangan Modern: Cloud & Generative AI" data-tip="Klik diagram Forensik Cloud & Verifikasi Media Deepfake untuk memeriksa spektrogram audio dan deteksi rekayasa video GAN!">
+      <div class="max-w-6xl w-full mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- Left Content (5 Cols) -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 border border-rose-400/30 text-rose-300 text-xs font-mono font-bold">
+              <i class="fa-solid fa-robot"></i> 04 • FRONTIER FORENSIC CHALLENGES
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+              Tren Tantangan Forensik Modern: Cloud &amp; Generative AI
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Transformasi infrastruktur komputasi awan dan kecerdasan buatan generatif menuntut metode investigasi baru melampaui penyitaan perangkat keras konvensional.
+            </p>
+
+            <!-- Challenge 1: Cloud Forensics -->
+            <div class="glass-card p-4 rounded-2xl border-l-4 border-l-cyan-400">
+              <div class="flex items-center gap-2.5 text-cyan-300 font-bold text-sm">
+                <i class="fa-solid fa-cloud-bolt text-base"></i>
+                <span>1. Cloud Forensics (AWS / Azure)</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                Tidak ada harddisk fisik yang dapat disita secara langsung. Penyelidik mengandalkan <strong>API Snapshot</strong>, <code class="text-cyan-300">AWS CloudTrail logs</code>, dan <code class="text-cyan-300">Azure Activity Logs</code> yang tersebar di yurisdiksi lintas batas negara (<em>cross-border data sovereignty</em>).
+              </p>
+            </div>
+
+            <!-- Challenge 2: AI & Deepfake Verification -->
+            <div class="glass-card p-4 rounded-2xl border-l-4 border-l-purple-500">
+              <div class="flex items-center gap-2.5 text-purple-300 font-bold text-sm">
+                <i class="fa-solid fa-waveform-lines fa-wand-magic-sparkles text-base"></i>
+                <span>2. AI &amp; Deepfake Verification</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                Pembuktian keaslian rekaman video, suara percakapan, atau gambar bukti digital menggunakan <strong>analisis spektral frekuensi audio</strong> dan deteksi artefak kompresi model <em>Generative Adversarial Networks (GAN)</em>.
+              </p>
+            </div>
+          </div>
+
+          <!-- Right Visual Diagram (7 Cols) -->
+          <div class="lg:col-span-7">
+            <div class="glass-panel p-3 sm:p-4 rounded-2xl">
+              <div class="diagram-frame group" onclick="openLightbox('cloud_deepfake_forensics.png', 'Forensik Cloud (AWS CloudTrail & Azure Activity Log) & Verifikasi Media Deepfake (Audio Spektral & Video GAN)')">
+                <img 
+                  src="cloud_deepfake_forensics.png" 
+                  alt="Diagram Forensik Cloud dan Verifikasi Media Deepfake AI"
+                  class="w-full h-auto rounded-xl object-contain"
+                  onerror="handleImgFallback(this, 'cloud_deepfake_forensics.png', 'Forensik Cloud & Verifikasi Media Deepfake')"
+                />
+                <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/85 border border-cyan-400/50 text-cyan-300 text-xs font-mono flex items-center gap-1.5 shadow-lg">
+                  <i class="fa-solid fa-magnifying-glass-plus"></i> Klik Perbesar
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-3 px-1 text-[11px] font-mono text-slate-400">
+                <span><i class="fa-solid fa-file-image text-cyan-400 mr-1"></i> Sumber: cloud_deepfake_forensics.png</span>
+                <span class="text-rose-400">Probabilitas Rekayasa AI • CloudTrail</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SLIDE 10: PANDUAN PERSIAPAN UAS & GENERATOR SHA-256 REAL-TIME
+    ====================================================================== -->
+    <section class="slide flex items-center justify-center px-4 sm:px-10 py-6" data-title="Persiapan UAS (30%) & Simulator SHA-256" data-tip="Coba masukkan teks atau pilih berkas pada Simulator Hash SHA-256 di samping untuk memvalidasi integritas bukti digital secara langsung!">
+      <div class="max-w-6xl w-full mx-auto space-y-5">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-2">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-amber-400">05 • EVALUASI AKHIR &amp; INTEGRITAS KRIPTOGRAFI</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Panduan Persiapan UAS (Pertemuan 16 — Bobot 30%)</h2>
+          </div>
+          <span class="px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-400/40 text-amber-300 font-mono text-xs font-bold self-start">
+            WAJIB VALIDASI SHA-256
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          <!-- Left: 3 UAS Components + References (7 Cols) -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <!-- Component 1 -->
+              <div class="glass-card p-4 rounded-2xl border-t-4 border-t-cyan-400">
+                <div class="text-xs font-mono text-cyan-400 font-bold mb-1">KOMPONEN 01</div>
+                <h3 class="text-sm font-bold text-white">Portofolio BAP Lengkap</h3>
+                <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                  Penggabungan hasil analisis kasus komprehensif (<strong>Pertemuan 9 s.d. 14</strong>) ke dalam format resmi <em>Berita Acara Pemeriksaan (BAP)</em>.
+                </p>
+              </div>
+
+              <!-- Component 2 -->
+              <div class="glass-card p-4 rounded-2xl border-t-4 border-t-purple-500">
+                <div class="text-xs font-mono text-purple-400 font-bold mb-1">KOMPONEN 02</div>
+                <h3 class="text-sm font-bold text-white">Ujian Teori &amp; Kasus Mandiri</h3>
+                <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                  <strong>10 soal skenario</strong> pemecahan kasus kejahatan siber terpadu (dapat dilatih pada menu <em>Latihan 16</em> portal).
+                </p>
+              </div>
+
+              <!-- Component 3 -->
+              <div class="glass-card p-4 rounded-2xl border-t-4 border-t-amber-400">
+                <div class="text-xs font-mono text-amber-400 font-bold mb-1">KOMPONEN 03</div>
+                <h3 class="text-sm font-bold text-white">Integritas Kriptografi</h3>
+                <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                  Seluruh berkas bukti &amp; laporan yang dilampirkan wajib divalidasi dengan nilai hash <code class="text-amber-300">SHA-256</code> yang akurat.
+                </p>
+              </div>
+            </div>
+
+            <!-- Bibliography / Standards Box -->
+            <div class="glass-panel rounded-2xl p-4 sm:p-5">
+              <h4 class="text-xs font-mono uppercase tracking-wider text-cyan-300 font-bold mb-2.5 flex items-center gap-2">
+                <i class="fa-solid fa-book-bookmark"></i> Daftar Pustaka &amp; Standar Rujukan Modul 15
+              </h4>
+              <ol class="text-xs text-slate-300 space-y-1.5 list-decimal list-inside">
+                <li><strong>EC-Council. (2022).</strong> <em>Computer Hacking Forensic Investigator (CHFIv10) Courseware.</em></li>
+                <li><strong>NIST SP 800-101 Rev. 1</strong> — <em>Guidelines on Mobile Device Forensics.</em></li>
+                <li><strong>BSSN (Badan Siber dan Sandi Negara). (2021).</strong> <em>Pedoman Teknis Penanganan Insiden Siber Nasional.</em></li>
+                <li><strong>ENISA (European Union Agency for Cybersecurity). (2020).</strong> <em>Digital Forensics in the Cloud: Challenges and Recommendations.</em></li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- Right: Live SHA-256 Hash Generator Simulator (5 Cols) -->
+          <div class="lg:col-span-5">
+            <div class="glass-panel rounded-2xl p-5 border border-amber-400/35 h-full flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-mono font-bold text-amber-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-fingerprint"></i> SIMULATOR HASH SHA-256 LIVE
+                  </span>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">WebCrypto API</span>
+                </div>
+
+                <label class="block text-xs text-slate-300 mb-1.5">Ketik teks BAP / bukti atau pilih berkas digital:</label>
+                <textarea 
+                  id="shaInputText" 
+                  rows="2" 
+                  oninput="computeTextSHA256()"
+                  placeholder="Contoh: BAP_Forensik_UNIQHBA_IF704_2026.pdf"
+                  class="w-full rounded-xl bg-slate-950/90 border border-slate-700 focus:border-cyan-400 focus:outline-none p-2.5 text-xs font-mono text-cyan-200 placeholder-slate-500"
+                >BAP_Forensik_Digital_UNIQHBA_IF704</textarea>
+
+                <!-- File Uploader for Real Hash -->
+                <div class="mt-2.5">
+                  <label class="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-dashed border-cyan-500/40 cursor-pointer text-xs text-cyan-300 transition">
+                    <i class="fa-solid fa-file-shield"></i>
+                    <span id="fileLabelText">Pilih File Bukti untuk Hitung SHA-256...</span>
+                    <input type="file" id="shaFileInput" class="hidden" onchange="computeFileSHA256(event)" />
+                  </label>
+                </div>
+
+                <!-- Output Hash -->
+                <div class="mt-3">
+                  <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 mb-1">
+                    <span>DIGEST SHA-256 (64-HEX):</span>
+                    <button onclick="copyHashToClipboard()" class="text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                      <i class="fa-regular fa-copy"></i> <span id="copyStatusText">Salin Hash</span>
+                    </button>
+                  </div>
+                  <div id="shaOutputBox" class="p-3 rounded-xl bg-slate-950 border border-amber-400/30 font-mono text-[11px] break-all text-emerald-400 leading-relaxed selectable">
+                    Menghitung hash...
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-3 pt-2.5 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>Chain of Custody Integrity Check</span>
+                <span class="text-cyan-400 font-mono">VERIFIED <i class="fa-solid fa-circle-check"></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =====================================================================
+       ROBO-PATROL DF-07 FLOATING ASSISTANT (CORNER WIDGET)
+  ====================================================================== -->
+  <div id="roboWidget" class="fixed bottom-16 right-4 sm:right-6 z-30 flex flex-col items-end">
+    <!-- Chat Bubble -->
+    <div id="roboBubble" class="mb-2.5 max-w-xs sm:max-w-sm glass-panel rounded-2xl p-3.5 border border-cyan-400/40 shadow-neon-cyan transition-all duration-300">
+      <div class="flex items-center justify-between gap-2 pb-1.5 mb-1.5 border-b border-slate-700/70">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-mono font-bold text-cyan-300 tracking-wide">ROBO-PATROL DF-07</span>
+        </div>
+        <button onclick="toggleRoboBubble()" class="text-slate-400 hover:text-white text-xs px-1" title="Sembunyikan Tips">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p id="roboTipText" class="text-xs text-slate-200 leading-relaxed">
+        Halo Detektif! Saya Robot Patroli AI UNIQHBA, memindai integritas berkas digital di seluruh slide presentasi.
+      </p>
+    </div>
+
+    <!-- Custom SVG Robot Avatar Button -->
+    <button onclick="toggleRoboBubble()" title="Klik untuk Tips ROBO-PATROL DF-07" class="group relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-900/90 border-2 border-cyan-400/60 hover:border-cyan-300 flex items-center justify-center shadow-neon-cyan float-slow transition">
+      <!-- Inline SVG inspired by Robo-Patrol DF-07 -->
+      <svg viewBox="0 0 100 100" class="w-9 h-9 sm:w-10 sm:h-10">
+        <!-- Antenna -->
+        <line x1="50" y1="12" x2="50" y2="26" stroke="#14b8a6" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="50" cy="10" r="7" fill="#facc15" stroke="#0f172a" stroke-width="3"/>
+        <!-- Head Outer -->
+        <rect x="16" y="25" width="68" height="44" rx="18" fill="#0f172a" stroke="#14b8a6" stroke-width="5"/>
+        <!-- Visor -->
+        <rect x="24" y="33" width="52" height="28" rx="12" fill="#042f2e" stroke="#38bdf8" stroke-width="2.5"/>
+        <!-- Eyes -->
+        <circle cx="39" cy="47" r="7" fill="#14b8a6"/>
+        <circle cx="39" cy="47" r="3" fill="#ffffff"/>
+        <circle cx="61" cy="47" r="7" fill="#38bdf8"/>
+        <circle cx="61" cy="47" r="3" fill="#ffffff"/>
+        <!-- Laser Scan Line -->
+        <line x1="26" y1="47" x2="74" y2="47" stroke="#00f0ff" stroke-width="1.5" class="laser-line"/>
+        <!-- Chest Core -->
+        <polygon points="22,74 50,88 78,74 72,96 28,96" fill="#0d9488"/>
+        <circle cx="50" cy="76" r="8" fill="#facc15" stroke="#0f172a" stroke-width="2"/>
+        <polygon points="51,71 47,77 50,77 49,81 53,75 50,75" fill="#0f172a"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- =====================================================================
+       BOTTOM NAVIGATION & PROGRESS BAR
+  ====================================================================== -->
+  <footer class="relative z-20 bg-[#060b19]/90 backdrop-blur-md border-t border-cyan-500/15 px-4 sm:px-8 py-2.5">
+    <!-- Top thin progress bar -->
+    <div class="absolute top-0 left-0 right-0 h-[3px] bg-slate-800">
+      <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-400 via-purple-500 to-amber-400 transition-all duration-300" style="width: 10%;"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <!-- Slide Counter & Title -->
+      <div class="flex items-center gap-3 min-w-0">
+        <span id="slideCounter" class="font-mono text-xs sm:text-sm font-bold px-2.5 py-1 rounded-lg bg-cyan-500/15 text-cyan-300 border border-cyan-400/30 shrink-0">
+          01 / 10
+        </span>
+        <span id="currentSlideTitle" class="text-xs sm:text-sm font-medium text-slate-300 truncate">
+          Cover Utama — Pertemuan 15
+        </span>
+      </div>
+
+      <!-- Dot Indicators (Desktop) -->
+      <div id="slideDots" class="hidden md:flex items-center gap-1.5"></div>
+
+      <!-- Prev / Next Buttons -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="prevBtn" onclick="prevSlide()" class="px-3.5 py-1.5 rounded-xl glass-card text-xs sm:text-sm font-semibold text-slate-200 hover:text-cyan-300 disabled:opacity-40 disabled:pointer-events-none flex items-center gap-1.5">
+          <i class="fa-solid fa-chevron-left"></i>
+          <span class="hidden sm:inline">Sebelumnya</span>
+        </button>
+        <button id="nextBtn" onclick="nextSlide()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 text-xs sm:text-sm font-bold shadow-neon-cyan disabled:opacity-40 disabled:pointer-events-none flex items-center gap-1.5">
+          <span class="hidden sm:inline">Selanjutnya</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =====================================================================
+       IMAGE LIGHTBOX MODAL (ZOOM DETAIL DIAGRAM)
+  ====================================================================== -->
+  <div id="lightboxModal" onclick="closeLightbox(event)" class="fixed inset-0 z-50 hidden bg-slate-950/92 backdrop-blur-xl flex-col items-center justify-center p-4 sm:p-8">
+    <div class="max-w-6xl w-full flex items-center justify-between mb-3 px-2" onclick="event.stopPropagation()">
+      <div class="flex items-center gap-2.5">
+        <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-mono text-xs">INSPEKSI VISUAL DETAIL</span>
+        <h3 id="lightboxCaption" class="text-sm sm:text-base font-bold text-white truncate"></h3>
+      </div>
+      <button onclick="closeLightbox()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-rose-500/20 border border-slate-700 hover:border-rose-400 text-slate-200 hover:text-rose-300 flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    <div class="max-w-6xl w-full max-h-[82vh] flex items-center justify-center overflow-auto rounded-2xl border border-cyan-500/30 bg-[#040813] p-2 shadow-2xl" onclick="event.stopPropagation()">
+      <img id="lightboxImg" src="" alt="Preview Detail Diagram" class="max-w-full max-h-[78vh] object-contain rounded-xl" />
+    </div>
+    <p class="text-xs text-slate-400 font-mono mt-2.5">Tekan <span class="text-cyan-300">ESC</span> atau klik area gelap untuk menutup tampilan perbesar</p>
+  </div>
+
+  <!-- =====================================================================
+       SLIDE OVERVIEW GRID MODAL (DAFTAR ISI CEPAT)
+  ====================================================================== -->
+  <div id="overviewModal" onclick="toggleOverviewModal()" class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-xl flex-col items-center justify-center p-4 sm:p-8 overflow-y-auto">
+    <div class="max-w-5xl w-full glass-panel rounded-3xl p-6 sm:p-8" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-700/70">
+        <div>
+          <span class="text-xs font-mono text-cyan-400 uppercase">Navigasi Cepat Presentasi</span>
+          <h3 class="text-xl sm:text-2xl font-extrabold text-white">Daftar Isi Slide — Modul 15 Forensik Digital</h3>
+        </div>
+        <button onclick="toggleOverviewModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="overviewGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       JAVASCRIPT: SLIDE ENGINE, CANVAS PARTICLES, SHA-256 & INTERACTIONS
+  ====================================================================== -->
+  <script>
+    // -----------------------------------------------------------------------
+    // 1. SLIDE NAVIGATION & STATE MANAGEMENT
+    // -----------------------------------------------------------------------
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const totalSlides = slides.length;
+    let currentSlideIndex = 0;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    // Web Audio API Subtle Sci-Fi Navigation Click
+    function playNavSound(freq = 580) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.35, audioCtx.currentTime + 0.06);
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.07);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.07);
+      } catch (e) {
+        // Ignore audio errors if blocked by browser autoplay policy
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      icon.className = soundEnabled
+        ? 'fa-solid fa-volume-high text-cyan-400'
+        : 'fa-solid fa-volume-xmark text-slate-500';
+      if (soundEnabled) playNavSound(660);
+    }
+
+    // Build Bottom Dots & Overview Grid
+    function initNavigationUI() {
+      const dotsContainer = document.getElementById('slideDots');
+      const overviewGrid = document.getElementById('overviewGrid');
+      dotsContainer.innerHTML = '';
+      overviewGrid.innerHTML = '';
+
+      slides.forEach((slide, idx) => {
+        const title = slide.dataset.title || `Slide ${idx + 1}`;
+        // Bottom Dot
+        const dot = document.createElement('button');
+        dot.className = 'h-2 rounded-full transition-all duration-300 bg-slate-700 hover:bg-cyan-400/70 w-2';
+        dot.title = `${idx + 1}. ${title}`;
+        dot.onclick = () => goToSlide(idx);
+        dotsContainer.appendChild(dot);
+
+        // Overview Card
+        const card = document.createElement('button');
+        card.className = 'text-left p-3.5 rounded-2xl glass-card flex items-start gap-3 group';
+        card.onclick = () => {
+          goToSlide(idx);
+          toggleOverviewModal(false);
+        };
+        card.innerHTML = `
+          <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shrink-0">
+            ${String(idx + 1).padStart(2, '0')}
+          </span>
+          <span class="text-xs sm:text-sm font-semibold text-slate-200 group-hover:text-cyan-300 transition leading-snug">
+            ${title}
+          </span>
+        `;
+        overviewGrid.appendChild(card);
+      });
+    }
+
+    function updateSlideUI() {
+      slides.forEach((slide, idx) => {
+        if (idx === currentSlideIndex) {
+          slide.classList.add('active');
+          slide.scrollTop = 0;
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      const activeSlide = slides[currentSlideIndex];
+      const title = activeSlide.dataset.title || '';
+      const tip = activeSlide.dataset.tip || '';
+
+      // Update Counter & Title
+      document.getElementById('slideCounter').textContent =
+        `${String(currentSlideIndex + 1).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+      document.getElementById('currentSlideTitle').textContent = title;
+
+      // Update Progress Bar
+      const pct = ((currentSlideIndex + 1) / totalSlides) * 100;
+      document.getElementById('progressBar').style.width = `${pct}%`;
+
+      // Update Dots
+      const dots = document.getElementById('slideDots').children;
+      Array.from(dots).forEach((dot, idx) => {
+        if (idx === currentSlideIndex) {
+          dot.className = 'h-2 rounded-full transition-all duration-300 bg-cyan-400 w-7 shadow-neon-cyan';
+        } else {
+          dot.className = 'h-2 rounded-full transition-all duration-300 bg-slate-700 hover:bg-cyan-400/70 w-2';
+        }
+      });
+
+      // Update Prev/Next Buttons
+      document.getElementById('prevBtn').disabled = currentSlideIndex === 0;
+      document.getElementById('nextBtn').disabled = currentSlideIndex === totalSlides - 1;
+
+      // Update Robo-Patrol DF-07 Tip
+      if (tip) {
+        document.getElementById('roboTipText').textContent = tip;
+      }
+    }
+
+    function goToSlide(index) {
+      if (index < 0 || index >= totalSlides) return;
+      currentSlideIndex = index;
+      playNavSound(540 + index * 20);
+      updateSlideUI();
+    }
+
+    function nextSlide() {
+      if (currentSlideIndex < totalSlides - 1) {
+        goToSlide(currentSlideIndex + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlideIndex > 0) {
+        goToSlide(currentSlideIndex - 1);
+      }
+    }
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+      // Ignore shortcuts if typing inside textarea/input
+      if (['TEXTAREA', 'INPUT'].includes(document.activeElement.tagName)) return;
+
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Escape') {
+        closeLightbox();
+        toggleOverviewModal(false);
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      } else if (e.key.toLowerCase() === 'g') {
+        toggleOverviewModal();
+      }
+    });
+
+    // Touch Swipe Navigation
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 65) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+      }
+    }, { passive: true });
+
+    // Fullscreen Toggle
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        document.getElementById('fsIcon').className = 'fa-solid fa-compress text-amber-400';
+      } else {
+        document.exitFullscreen().catch(() => {});
+        document.getElementById('fsIcon').className = 'fa-solid fa-expand text-amber-400';
+      }
+    }
+
+    // Overview Modal Toggle
+    function toggleOverviewModal(forceState) {
+      const modal = document.getElementById('overviewModal');
+      const isHidden = modal.classList.contains('hidden');
+      const show = typeof forceState === 'boolean' ? forceState : isHidden;
+      if (show) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    // Robo-Patrol Bubble Toggle
+    function toggleRoboBubble() {
+      const bubble = document.getElementById('roboBubble');
+      bubble.classList.toggle('hidden');
+      playNavSound(720);
+    }
+
+    // -----------------------------------------------------------------------
+    // 2. LIGHTBOX ZOOM & GRACEFUL IMAGE FALLBACK
+    // -----------------------------------------------------------------------
+    function openLightbox(src, caption) {
+      const modal = document.getElementById('lightboxModal');
+      const img = document.getElementById('lightboxImg');
+      const cap = document.getElementById('lightboxCaption');
+      img.src = src;
+      cap.textContent = caption;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      playNavSound(680);
+    }
+
+    function closeLightbox(e) {
+      if (e && e.target !== document.getElementById('lightboxModal')) return;
+      const modal = document.getElementById('lightboxModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleImgFallback(imgEl, filename, title) {
+      imgEl.onerror = null;
+      const parent = imgEl.parentElement;
+      imgEl.style.display = 'none';
+      const fallback = document.createElement('div');
+      fallback.className = 'p-8 text-center bg-slate-900/90 border border-dashed border-cyan-500/40 rounded-xl';
+      fallback.innerHTML = `
+        <i class="fa-solid fa-image text-3xl text-cyan-400 mb-2"></i>
+        <div class="text-sm font-bold text-white">${title}</div>
+        <div class="text-xs font-mono text-amber-300 mt-1">File gambar: ${filename}</div>
+        <p class="text-[11px] text-slate-400 mt-2">Pastikan file <code class="text-cyan-300">${filename}</code> berada dalam satu folder yang sama dengan file HTML ini saat di-hosting.</p>
+      `;
+      parent.prepend(fallback);
+    }
+
+    // -----------------------------------------------------------------------
+    // 3. INTERACTIVE ARTIFACT MATRIX FILTER (SLIDE 7)
+    // -----------------------------------------------------------------------
+    function filterArtifacts(category, btnEl) {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.className = 'filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold glass-card text-slate-300 hover:text-cyan-300';
+      });
+      btnEl.className = 'filter-btn active px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-400 text-slate-950 transition';
+
+      const rows = document.querySelectorAll('#artifactTableBody tr');
+      rows.forEach(row => {
+        if (category === 'all' || row.dataset.cat === category) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      playNavSound(620);
+    }
+
+    // -----------------------------------------------------------------------
+    // 4. REAL-TIME SHA-256 HASH GENERATOR (SLIDE 10)
+    // -----------------------------------------------------------------------
+    function bufferToHex(buffer) {
+      return Array.from(new Uint8Array(buffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    async function computeTextSHA256() {
+      const text = document.getElementById('shaInputText').value;
+      const out = document.getElementById('shaOutputBox');
+      try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        out.textContent = bufferToHex(hashBuffer);
+        document.getElementById('fileLabelText').textContent = 'Pilih File Bukti untuk Hitung SHA-256...';
+      } catch (err) {
+        out.textContent = 'WebCrypto tidak tersedia di konteks ini.';
+      }
+    }
+
+    async function computeFileSHA256(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const out = document.getElementById('shaOutputBox');
+      const label = document.getElementById('fileLabelText');
+      label.textContent = `File: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      out.textContent = 'Menghitung SHA-256 berkas...';
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+        out.textContent = bufferToHex(hashBuffer);
+        playNavSound(780);
+      } catch (err) {
+        out.textContent = 'Gagal membaca berkas.';
+      }
+    }
+
+    function copyHashToClipboard() {
+      const hashText = document.getElementById('shaOutputBox').textContent.trim();
+      const tempInput = document.createElement('textarea');
+      tempInput.value = hashText;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        const status = document.getElementById('copyStatusText');
+        status.textContent = 'Tersalin!';
+        setTimeout(() => { status.textContent = 'Salin Hash'; }, 1800);
+        playNavSound(820);
+      } catch (e) {}
+      document.body.removeChild(tempInput);
+    }
+
+    // -----------------------------------------------------------------------
+    // 5. ANIMATED CYBER PARTICLE NETWORK BACKGROUND (HTML5 CANVAS)
+    // -----------------------------------------------------------------------
+    const canvas = document.getElementById('cyberCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    }
+
+    function initParticles() {
+      const count = Math.min(55, Math.floor((canvas.width * canvas.height) / 24000));
+      particles = [];
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.45,
+          vy: (Math.random() - 0.5) * 0.45,
+          r: Math.random() * 1.8 + 0.8
+        });
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.45)';
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 135) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(0, 240, 255, ${(1 - dist / 135) * 0.14})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+
+    // Initialize on Window Load
+    window.addEventListener('resize', resizeCanvas);
+    window.onload = function () {
+      resizeCanvas();
+      animateParticles();
+      initNavigationUI();
+      updateSlideUI();
+      computeTextSHA256();
+    };
+  </script>
+</body>
+</html>
